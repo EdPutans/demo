@@ -6,6 +6,7 @@ import java.util.List;
 public class Quote {
   public static List<Quote> allQuotes = new ArrayList<Quote>();
 
+  public Integer id;
   public String name;
   public String quote;
 
@@ -26,15 +27,26 @@ public class Quote {
     Quote newQuote = new Quote();
     newQuote.name = name;
     newQuote.quote = quote;
-    // bonus
     newQuote.id = generateNewId();
-
     allQuotes.add(newQuote);
+
     return newQuote;
   }
 
-  // bonus
-  public Integer id;
+  public static Quote getQuoteById(Integer id){
+    for(Quote quote : allQuotes){
+      if(quote.id == id){
+        return quote;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public String toString() {
+    return "Name: " + name + ", Quote: " + quote + ", Id: " + id;
+  }
+
   public static Integer findLargestQuoteId(){
     Integer largestId = 0;
     

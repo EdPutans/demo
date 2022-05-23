@@ -2,13 +2,12 @@ package com.hoxton.maven_spring_boot_demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-// 1. Add @SpringBootApplication to the entry point in App.java
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 public class App {
 
 	public static void main(String[] args) {
-    // 2. Replace the default with SpringApplication initiator:
 		SpringApplication.run(App.class, args);
 	}
 }

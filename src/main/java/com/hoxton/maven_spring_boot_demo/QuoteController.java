@@ -1,6 +1,6 @@
 package com.hoxton.maven_spring_boot_demo;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuoteController {
   
   @RequestMapping(value ="", method = RequestMethod.GET)
-  public ResponseEntity<List<Quote>> getQuotes() {
+  public ResponseEntity<ArrayList<Person>> getQuotes() {
+    
     return ResponseEntity
     .status(HttpStatus.OK)                 
-      .body(Quote.getAllQuotes());
+      .body(Person.getAllPersonsAndQuotes());
   }
 
   @PostMapping(value="")
     public ResponseEntity<Quote> addQuote(@RequestBody Quote quote) {
 
-    Quote createdQuote = Quote.createQuote(quote.name, quote.quote);
-
-    return ResponseEntity
-    .status(HttpStatus.OK)                 
-      .body(createdQuote);
+    // Quote createdQuote = Quote.createQuote(quote.name, quote.quote, Person.getPersonByName(quote.name));
+      return null;
+    // return ResponseEntity
+    // .status(HttpStatus.OK)                 
+    //   .body(createdQuote);
   }
   
   @GetMapping(value="/{id}") 

@@ -10,11 +10,6 @@ public class Quote {
   public String name;
   public String quote;
 
-  static {
-    createQuote("Make memes, not war!" , "Mark Twain");
-    createQuote("Stop making quotes I never said!" , "Albert Einstein");
-    createQuote("Some relationships in life are one to many, and thats okay" , "Nicolas Marcora");
-  }
 
   public Quote() {
     super();
@@ -24,12 +19,16 @@ public class Quote {
     return allQuotes;
   }
   
-  public static Quote createQuote(String name, String quote){
+  public static Quote createQuote(String name, String quote, Person person){
     Quote newQuote = new Quote();
-    newQuote.name = name;
+
+    newQuote.name = person.name;
     newQuote.quote = quote;
+    
     newQuote.id = generateNewId();
     allQuotes.add(newQuote);
+
+    person.quotes.add(newQuote);
 
     return newQuote;
   }

@@ -23,6 +23,7 @@ public class Quote {
   public static List<Quote> getAllQuotes() {
     return allQuotes;
   }
+  
   public static Quote createQuote(String name, String quote){
     Quote newQuote = new Quote();
     newQuote.name = name;
@@ -35,11 +36,28 @@ public class Quote {
 
   public static Quote getQuoteById(Integer id){
     for(Quote quote : allQuotes){
-      if(quote.id == id){
-        return quote;
-      }
+      if(quote.id == id) return quote;
     }
+
     return null;
+  }
+
+  public static Quote updateQuote(Integer id, Quote quote){
+    Quote foundQuote = getQuoteById(id);
+    if(foundQuote == null) return null;
+    
+    if(quote.name != null) foundQuote.name = quote.name;
+    if(quote.quote != null)foundQuote.quote = quote.quote;
+
+    return foundQuote;
+  }
+
+  public static Boolean deleteQuote(Integer id) {
+    Quote quoteToDelete = Quote.getQuoteById(id);
+   if(quoteToDelete == null) return false;
+
+    Quote.getAllQuotes().remove(quoteToDelete);
+    return true;
   }
 
   @Override
@@ -51,9 +69,7 @@ public class Quote {
     Integer largestId = 0;
     
     for(Quote quote : allQuotes){
-      if(quote.id > largestId){
-        largestId = quote.id;
-      }
+      if(quote.id > largestId) largestId = quote.id;
     }
     return largestId;
   }

@@ -2,39 +2,73 @@ package com.hoxton.maven_spring_boot_demo;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.core.style.ToStringCreator;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/quotes")
 public class QuoteController {
   
-  @RequestMapping(value ="/quotes", method = RequestMethod.GET)
-  public List<Quote> getQuotes() {
-    return Quote.getAllQuotes();
+  @RequestMapping(value ="", method = RequestMethod.GET)
+  public ResponseEntity<List<Quote>> getQuotes() {
+    return ResponseEntity
+    .status(HttpStatus.OK)                 
+      .body(Quote.getAllQuotes());
   }
 
-  @RequestMapping(value="/quotes", method = RequestMethod.POST)
-    public Quote addQuote(@RequestBody Quote quote) {
+  @PostMapping(value="")
+    public ResponseEntity<Quote> addQuote(@RequestBody Quote quote) {
 
-    return Quote.createQuote(quote.name, quote.quote);
+    Quote createdQuote = Quote.createQuote(quote.name, quote.quote);
+
+    return ResponseEntity
+    .status(HttpStatus.OK)                 
+      .body(createdQuote);
   }
   
-  @GetMapping(value="/quotes/{id}") 
-  public Quote getQuoteById(@PathVariable("id") String id) {
+  @GetMapping(value="/{id}") 
+  public ResponseEntity<?> getQuoteById(@PathVariable("id") String id) {
     Integer idInt = Integer.parseInt(id);
 
     Quote quote = Quote.getQuoteById(idInt);
-    System.out.print(quote.toString()); // hope you didnt fucking forget to BUILD A CLASS OVERRIDE, JUST TO LOG A FUCKING VARIABLE!??
+    if(quote == null) return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
 
-    return quote;
+    return ResponseEntity
+        .status(HttpStatus.OK)                 
+          .body(quote);
+  }
+
+  @PatchMapping(value="/{id}")
+  public ResponseEntity<?> updateQuote(@PathVariable("id") String id, @RequestBody Quote quote) {
+    Integer idInt = Integer.parseInt(id);
+    Quote updatedQuote = Quote.updateQuote(idInt, quote);
+
+    if(updatedQuote == null) return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
+
+    return ResponseEntity
+      .status(HttpStatus.OK)                 
+        .body(updatedQuote);
+  }
+
+  @DeleteMapping(value="/{id}")
+  public ResponseEntity<?> deleteQuote(@PathVariable("id") String id) {
+    Integer idInt = Integer.parseInt(id);
+
+    Boolean successfullyDeletedQuote = Quote.deleteQuote(idInt);
+    if(!successfullyDeletedQuote) 
+      return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
+    
+    return ResponseEntity
+      .status(HttpStatus.OK)                 
+        .body("Quote with id " + id + " deleted!");
   }
 }

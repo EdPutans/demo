@@ -17,58 +17,67 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/quotes")
 public class QuoteController {
-  
-  @RequestMapping(value ="", method = RequestMethod.GET)
+
+  @RequestMapping(value = "", method = RequestMethod.GET)
   public ResponseEntity<List<Quote>> getQuotes() {
     return ResponseEntity
-    .status(HttpStatus.OK)                 
-      .body(Quote.getAllQuotes());
+        .status(HttpStatus.OK)
+        .body(Quote.getAllQuotes());
   }
 
-  @PostMapping(value="")
-    public ResponseEntity<Quote> addQuote(@RequestBody Quote quote) {
+  @PostMapping(value = "")
+  public ResponseEntity<Quote> addQuote(@RequestBody Quote quote) {
 
-    Quote createdQuote = Quote.createQuote(quote.name, quote.quote);
+    Quote createdQuote = Quote.createQuote(quote.quote, quote.quotee.firstName, quote.quotee.lastName,
+        quote.quotee.yearOfBirth);
 
     return ResponseEntity
-    .status(HttpStatus.OK)                 
-      .body(createdQuote);
+        .status(HttpStatus.OK)
+        .body(createdQuote);
   }
-  
-  @GetMapping(value="/{id}") 
+
+  @GetMapping(value = "/{id}")
   public ResponseEntity<?> getQuoteById(@PathVariable("id") String id) {
     Integer idInt = Integer.parseInt(id);
 
     Quote quote = Quote.getQuoteById(idInt);
-    if(quote == null) return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
+    if (quote == null)
+      return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
 
     return ResponseEntity
-        .status(HttpStatus.OK)                 
-          .body(quote);
+        .status(HttpStatus.OK)
+        .body(quote);
   }
 
-  @PatchMapping(value="/{id}")
+  @PatchMapping(value = "/{id}")
   public ResponseEntity<?> updateQuote(@PathVariable("id") String id, @RequestBody Quote quote) {
     Integer idInt = Integer.parseInt(id);
-    Quote updatedQuote = Quote.updateQuote(idInt, quote);
 
-    if(updatedQuote == null) return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
+    Quote updatedQuote = Quote.updateQuote(
+        idInt,
+        quote.quote != null ? quote.quote : null,
+        quote.quotee != null && quote.quotee.firstName != null ? quote.quotee.firstName : null,
+        quote.quotee != null && quote.quotee.lastName != null ? quote.quotee.lastName : null,
+        quote.quotee != null && quote.quotee.yearOfBirth != null ? quote.quotee.yearOfBirth : null);
+
+    if (updatedQuote == null)
+      return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
 
     return ResponseEntity
-      .status(HttpStatus.OK)                 
+        .status(HttpStatus.OK)
         .body(updatedQuote);
   }
 
-  @DeleteMapping(value="/{id}")
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<?> deleteQuote(@PathVariable("id") String id) {
     Integer idInt = Integer.parseInt(id);
 
     Boolean successfullyDeletedQuote = Quote.deleteQuote(idInt);
-    if(!successfullyDeletedQuote) 
+    if (!successfullyDeletedQuote)
       return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
-    
+
     return ResponseEntity
-      .status(HttpStatus.OK)                 
+        .status(HttpStatus.OK)
         .body("Quote with id " + id + " deleted!");
   }
 }

@@ -2,6 +2,9 @@ package com.hoxton.maven_spring_boot_demo;
 
 import java.util.ArrayList;
 
+import com.hoxton.maven_spring_boot_demo.helpers.api.QuoteWithPerson;
+import com.hoxton.maven_spring_boot_demo.helpers.api.QuoteWithPersonRequestBody;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,59 +20,64 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/quotes")
 public class QuoteController {
-  
-  @RequestMapping(value ="", method = RequestMethod.GET)
-  public ResponseEntity<ArrayList<Person>> getQuotes() {
-    
+
+  @RequestMapping(value = "", method = RequestMethod.GET)
+  public ResponseEntity<ArrayList<Quote>> getQuotes() {
+
     return ResponseEntity
-    .status(HttpStatus.OK)                 
-      .body(Person.getAllPersonsAndQuotes());
+        .status(HttpStatus.OK)
+        .body(Quote.getAllQuotesWithPerson());
   }
 
-  @PostMapping(value="")
-    public ResponseEntity<Quote> addQuote(@RequestBody Quote quote) {
+  @PostMapping(value = "")
+  public ResponseEntity<Quote> addQuote(@RequestBody QuoteWithPersonRequestBody quoteWithPerson) {
 
-    // Quote createdQuote = Quote.createQuote(quote.name, quote.quote, Person.getPersonByName(quote.name));
-      return null;
-    // return ResponseEntity
-    // .status(HttpStatus.OK)                 
-    //   .body(createdQuote);
+    Quote createdQuote = Quote.createQuote(quoteWithPerson.name, quoteWithPerson.quote,
+        Person.getPersonByName(quoteWithPerson.name));
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(createdQuote);
   }
-  
-  @GetMapping(value="/{id}") 
+
+  @GetMapping(value = "/{id}")
   public ResponseEntity<?> getQuoteById(@PathVariable("id") String id) {
     Integer idInt = Integer.parseInt(id);
 
     Quote quote = Quote.getQuoteById(idInt);
-    if(quote == null) return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
+    if (quote == null)
+      return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
 
     return ResponseEntity
-        .status(HttpStatus.OK)                 
-          .body(quote);
+        .status(HttpStatus.OK)
+        .body(quote);
   }
 
-  @PatchMapping(value="/{id}")
-  public ResponseEntity<?> updateQuote(@PathVariable("id") String id, @RequestBody Quote quote) {
+  @PatchMapping(value = "/{id}")
+  public ResponseEntity<?> updateQuote(
+      @PathVariable("id") String id,
+      @RequestBody QuoteWithPersonRequestBody quote) {
     Integer idInt = Integer.parseInt(id);
     Quote updatedQuote = Quote.updateQuote(idInt, quote);
 
-    if(updatedQuote == null) return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
+    if (updatedQuote == null)
+      return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
 
     return ResponseEntity
-      .status(HttpStatus.OK)                 
+        .status(HttpStatus.OK)
         .body(updatedQuote);
   }
 
-  @DeleteMapping(value="/{id}")
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<?> deleteQuote(@PathVariable("id") String id) {
     Integer idInt = Integer.parseInt(id);
 
     Boolean successfullyDeletedQuote = Quote.deleteQuote(idInt);
-    if(!successfullyDeletedQuote) 
+    if (!successfullyDeletedQuote)
       return QuoteError.create("Quote not found", HttpStatus.NOT_FOUND);
-    
+
     return ResponseEntity
-      .status(HttpStatus.OK)                 
+        .status(HttpStatus.OK)
         .body("Quote with id " + id + " deleted!");
   }
 }

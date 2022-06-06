@@ -1,25 +1,40 @@
 package com.hoxton.maven_spring_boot_demo;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import com.hoxton.maven_spring_boot_demo.helpers.api.QuoteWithPerson;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.hoxton.maven_spring_boot_demo.helpers.api.QuoteWithPersonRequestBody;
 
+@Entity
+@Table(name = "quoterunis")
 public class Quote {
   // list of all quotes
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
   public Integer id;
+
+	@Column(name = "quoteruni")
   public String quote;
+  
+  @Column(name = "quoteeruni")
+  public String quotee;
 
-  static {
-    new Person("Steve", 20);
+  // static {
+  //   new Person("Steve", 20);
 
-    Person John = new Person("John", 30);
-    Quote.createQuote("Make memes, not war!", "Mark Twain", John);
-    Quote.createQuote("Stop making quotes I never said!", "Albert Einstein", John);
-    Quote.createQuote("Some relationships in life are one to many, and thats okay", "Nicolas Marcora", John);
-  }
+  //   Person John = new Person("John", 30);
+  //   Quote.createQuote("Make memes, not war!", "Mark Twain", John);
+  //   Quote.createQuote("Stop making quotes I never said!", "Albert Einstein", John);
+  //   Quote.createQuote("Some relationships in life are one to many, and thats okay", "Nicolas Marcora", John);
+  // }
 
   public Quote() {
     super();

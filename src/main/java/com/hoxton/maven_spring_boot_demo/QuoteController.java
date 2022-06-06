@@ -1,12 +1,14 @@
 package com.hoxton.maven_spring_boot_demo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
-import com.hoxton.maven_spring_boot_demo.helpers.api.QuoteWithPerson;
 import com.hoxton.maven_spring_boot_demo.helpers.api.QuoteWithPersonRequestBody;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/quotes")
 public class QuoteController {
+
+  @Autowired
+  QuoteService quoteService;
 
   @RequestMapping(value = "", method = RequestMethod.GET)
   public ResponseEntity<ArrayList<Quote>> getQuotes() {
@@ -40,6 +45,12 @@ public class QuoteController {
         .body(createdQuote);
   }
 
+  @GetMapping(value = "/mark")
+  public ResponseEntity<Collection<Quote>> getMarkFreakingQuotes() {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(quoteService.readMarksFreakingQuotes());
+  }
   @GetMapping(value = "/{id}")
   public ResponseEntity<?> getQuoteById(@PathVariable("id") String id) {
     Integer idInt = Integer.parseInt(id);
